@@ -1,6 +1,17 @@
+"""
+main.py
+
+Author: Luke Griffin 21334528, Patrick Crotty 21336113, Michael Cronin 21329001, Aaron Smith 21335168,
+    Cullen Toal 21306133
+Date: 18-04-2025
+
+Description:
+This script runs the full Harris Corner Detection and image stitching pipeline.
+"""
+
 from harris_stitcher import *
 import matplotlib.pyplot as plt
-import os
+
 
 def main():
     image_pairs = [
@@ -34,7 +45,6 @@ def main():
 
         # Compute stitched image
         stitched = stitch_images(im1, im2, translation)
-
 
         # Create a figure with two subplots side-by-side
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))

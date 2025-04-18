@@ -1,12 +1,24 @@
+"""
+harris_stitcher.py
+
+Author: Luke Griffin 21334528, Patrick Crotty 21336113, Michael Cronin 21329001, Aaron Smith 21335168,
+    Cullen Toal 21306133
+Date: 18-04-2025
+
+Description:
+Contains all core functions for Harris corner detection
+"""
+
 import numpy as np
 from PIL import Image
-import matplotlib.pyplot as plt
+
 
 def gaussian_kernel(size, sigma):
     ax = np.linspace(-(size // 2), size // 2, size)
     xx, yy = np.meshgrid(ax, ax)
     kernel = np.exp(-(xx**2 + yy**2) / (2. * sigma**2))
     return kernel / np.sum(kernel)
+
 
 def gaussian_derivative_kernels(sigma, size=5):
     ax = np.linspace(-(size // 2), size // 2, size)
@@ -16,6 +28,7 @@ def gaussian_derivative_kernels(sigma, size=5):
     gx = np.outer(g, dg)  # ∂G/∂x
     gy = np.outer(dg, g)  # ∂G/∂y
     return gx, gy
+
 
 def convolve2d(image, kernel):
     kh, kw = kernel.shape
@@ -27,6 +40,7 @@ def convolve2d(image, kernel):
             region = padded[i:i+kh, j:j+kw]
             output[i, j] = np.sum(region * kernel)
     return output
+
 
 def harris_response(image, sigma=1.0):
     gx, gy = gaussian_derivative_kernels(sigma, size=5)
@@ -44,6 +58,7 @@ def harris_response(image, sigma=1.0):
     R = det / (trace + 1e-12)
     return R
 
+
 def get_harris_points(harris_im, threshold=0.1, min_d=10):
     corner_threshold = harris_im.max() * threshold
     harris_im_th = (harris_im > corner_threshold)
@@ -60,6 +75,7 @@ def get_harris_points(harris_im, threshold=0.1, min_d=10):
             filtered_coords.append((r, c))
             allowed_locations[r-min_d:r+min_d+1, c-min_d:c+min_d+1] = False
     return filtered_coords
+
 
 def get_descriptors(image, filtered_coords, wid=5):
     descriptors = []
@@ -84,6 +100,7 @@ def match_descriptors(desc1, desc2, threshold=0.95):
             matches.append((i, j))
     return matches
 
+
 def exhaustive_ransac(matches, coords1, coords2, error_thresh=1.6):
     translations = []
     for i, j in matches:
@@ -103,6 +120,7 @@ def exhaustive_ransac(matches, coords1, coords2, error_thresh=1.6):
             best_support = support
             best_translation = tr
     return best_translation
+
 
 def stitch_images(im1, im2, translation):
     dr, dc = translation
@@ -127,17 +145,6 @@ def stitch_images(im1, im2, translation):
         out[:r2, :c2] = im2
     return out
 
+
 def load_image_grayscale(path):
     return np.array(Image.open(path).convert('L')) / 255.0
-
-def visualize_matches(im1, im2, coords1, coords2, matches):
-    fig, ax = plt.subplots(figsize=(10, 6))
-    combined = np.hstack((im1, im2))
-    ax.imshow(combined, cmap='gray')
-    for i, j in matches:
-        r1, c1 = coords1[i]
-        r2, c2 = coords2[j]
-        ax.plot([c1, c2 + im1.shape[1]], [r1, r2], 'r', linewidth=0.5)
-    ax.axis('off')
-    plt.show()
-
