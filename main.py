@@ -32,14 +32,31 @@ def main():
         translation = exhaustive_ransac(matches, coords1, coords2)
         print("Estimated translation:", translation)
 
+        # Compute stitched image
         stitched = stitch_images(im1, im2, translation)
 
-        plt.imshow(stitched, cmap='gray')
-        plt.title(f"Stitched: {name1} + {name2}")
-        plt.axis('off')
+
+        # Create a figure with two subplots side-by-side
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+        # match lines on side-by-side image
+        combined = np.hstack((im1, im2))
+        ax1.imshow(combined, cmap='gray')
+        ax1.set_title("Visualized Matches")
+        for i, j in matches:
+            r1, c1 = coords1[i]
+            r2, c2 = coords2[j]
+            ax1.plot([c1, c2 + im1.shape[1]], [r1, r2], 'r', linewidth=0.5)
+        ax1.axis('off')
+
+        # stitched image only
+        ax2.imshow(stitched, cmap='gray')
+        ax2.set_title(f"Stitched Image: {name1} + {name2}")
+        ax2.axis('off')
+
+        plt.tight_layout()
         plt.show()
 
-        visualize_matches(im1, im2, coords1, coords2, matches)
 
 if __name__ == "__main__":
     main()
