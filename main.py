@@ -17,7 +17,16 @@ def main():
     image_pairs = [
         ("image-pairs/arch1.png", "image-pairs/arch2.png"),
         ("image-pairs/balloon1.png", "image-pairs/balloon2.png"),
-        ("image-pairs/tigermoth1.png", "image-pairs/tigermoth2.png")
+        ("image-pairs/tigermoth1.png", "image-pairs/tigermoth2.png"),
+
+        ("image-pairs/tigermoth1_2x.png", "image-pairs/tigermoth2_2x_0.9x.png"),
+        ("image-pairs/tigermoth1_2x.png", "image-pairs/tigermoth2_2x_1.1x.png"),
+        ("image-pairs/tigermoth1_2x.png", "image-pairs/tigermoth2_2x_1.5x.png"),
+        ("image-pairs/tigermoth1_2x.png", "image-pairs/tigermoth2_2x_2x.png"),
+
+        ("image-pairs/tigermoth1_2x.png", "image-pairs/tigermoth2_2x_1deg.png"),
+        ("image-pairs/tigermoth1_2x.png", "image-pairs/tigermoth2_2x_5deg.png"),
+        ("image-pairs/tigermoth1_2x.png", "image-pairs/tigermoth2_2x_10deg.png"),
     ]
 
     for name1, name2 in image_pairs:
